@@ -1,0 +1,30 @@
+#!/bin/bash
+#Create a script to run omxplayer until script is killed.
+
+echo "
+#!/bin/bash
+pid=\$\$
+echo $pid
+SERVICE='omxplayer'
+while true; do
+sudo sh -c \"TERM=linux setterm -foreground black -clear >/dev/tty0\"
+if ps ax | grep -v grep | grep $SERVICE > /dev/null
+then
+sleep 1
+else
+omxplayer -o hdmi /home/pi/video.mp4
+fi
+done
+" > /tmp/tmp.sh
+
+#Execute script
+pid=$(bash /tmp/tmp.sh &)
+#Wait for read
+input = "0"
+while [ "q" != $input ]; do
+read -n 1 -s input
+done
+#kill the pid
+kill $pid
+rm /tmp/tmp.sh
+sudo sh -c "TERM=linux setterm -foreground white -clear >/dev/tty0"
